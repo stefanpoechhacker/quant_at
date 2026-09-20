@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Instagram — Hide Reels
 // @namespace    instagram-declutter
-// @version      1.0.1
-// @description  Hides the Reels tab, Reels tray, and individual Reels posts on the Instagram mobile website. Also bounces you away if you land on a /reel(s)/ URL directly.
+// @version      1.1.0
+// @description  Hides the Reels tab, Reels tray, and individual Reels posts on the Instagram mobile website. Blocks the endless Reels feed, but lets you watch a single reel someone shares with you directly (without being able to scroll/swipe into the next one).
 // @author       you
 // @match        https://www.instagram.com/*
 // @match        https://instagram.com/*
@@ -89,16 +89,54 @@
 
   function sweep() {
     hideReelLinks(document);
-    bounceIfOnReelPage();
+    guardReelNavigation();
   }
 
-  function bounceIfOnReelPage() {
-    if (REEL_HREF_RE.test(location.pathname)) {
+  // ---------------------------------------------------------------------
+  // Reel viewing policy:
+  //  - /reels/ (the endless algorithmic tab/feed) is always blocked.
+  //  - /reel/<id>/ (a single reel, e.g. from a DM share) is allowed, but
+  //    once you're on one, swiping/scrolling to a *different* reel id is
+  //    blocked — IG advances by swapping the URL under you via pushState,
+  //    so we detect that id change and snap back to the one you opened.
+  // ---------------------------------------------------------------------
+
+  const REELS_TAB_RE = /^\/reels\/?(?:$|[?#])/i;
+  const REEL_POST_RE = /^\/reel\/([^/?#]+)/i;
+
+  let lockedReelId = null;
+
+  function guardReelNavigation() {
+    if (REELS_TAB_RE.test(location.pathname)) {
+      lockedReelId = null;
+      bounceAway();
+      return;
+    }
+
+    const match = location.pathname.match(REEL_POST_RE);
+    if (!match) {
+      lockedReelId = null; // not on a reel view at all
+      return;
+    }
+
+    const id = match[1];
+    if (lockedReelId === null) {
+      lockedReelId = id; // first reel opened this visit - let it play
+    } else if (id !== lockedReelId) {
+      // Swiped/scrolled onto a different reel - snap back to the one you opened.
       if (history.length > 1) {
         history.back();
       } else {
-        location.replace("https://www.instagram.com/");
+        location.replace(`https://www.instagram.com/reel/${lockedReelId}/`);
       }
+    }
+  }
+
+  function bounceAway() {
+    if (history.length > 1) {
+      history.back();
+    } else {
+      location.replace("https://www.instagram.com/");
     }
   }
 

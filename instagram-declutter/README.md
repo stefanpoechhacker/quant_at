@@ -18,8 +18,12 @@ instead of the app, this gets you a normal Instagram with no Reels tab.
 - Watches the page for new content (Instagram loads posts dynamically as
   you scroll) and hides any post/card that links to a `/reel/...` or
   `/reels/...` URL.
-- If you ever land directly on a Reels URL (e.g. a shared link), it bounces
+- The endless Reels tab/feed itself is always blocked — landing there bounces
   you back automatically.
+- A single reel someone shares with you directly (a DM link, a profile post)
+  still plays normally. The moment you try to swipe/scroll to the *next*
+  reel from there, it snaps you back to the one you opened instead of
+  letting you fall into the algorithmic feed.
 
 ## Setup — iPhone (Safari)
 
