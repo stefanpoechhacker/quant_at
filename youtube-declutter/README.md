@@ -1,27 +1,43 @@
-# YouTube — Hide Shorts
+# YouTube — Hide Shorts & Ads
 
-Same idea as the Instagram Reels blocker, for YouTube: hides the Shorts tab,
-Shorts shelves in your feed/search results, and individual Shorts tiles on
-**youtube.com** in a mobile browser. A Short someone sends you directly still
-plays — but swiping/scrolling onward into the next one is blocked, snapping
-you back to the one you opened.
+Two independent userscripts for **youtube.com** in a mobile browser, same
+idea as the Instagram Reels blocker. Install either or both.
 
-Same limitation as before: this only works on the **website**, not the
-native YouTube app.
+## youtube-no-shorts.user.js
+
+Hides the Shorts tab, Shorts shelves in your feed/search results, and
+individual Shorts tiles. A Short someone sends you directly still plays —
+but swiping/scrolling onward into the next one is blocked, snapping you
+back to the one you opened.
+
+## youtube-no-ads.user.js
+
+Hides display/banner/overlay ads, auto-clicks "Skip Ad" the instant it's
+available, and fast-forwards through non-skippable video ads instead of
+making you sit through them.
+
+**Honest limitation:** this is client-side only — it acts on ads YouTube
+has already sent to your browser, it can't stop the ad request itself (that
+needs a real network-level content blocker, e.g. a Safari content-blocker
+app like AdGuard's free tier). YouTube also actively detects ad blockers and
+may show a "this violates YouTube's Terms of Service" prompt or throttle
+playback after repeated skips. This script does what's achievable from a
+userscript; it's not a guarantee of a fully ad-free experience the way
+Reels/Shorts hiding is.
+
+Both scripts only work on the **website**, not the native YouTube app.
 
 ## Setup
 
 If you already set up the Instagram script, you're most of the way there —
-same extension, just add a second script:
+same extension, just add another script (repeat per script you want):
 
 **iPhone (Safari):** open the Userscripts app → **+** → paste in the
-contents of [`youtube-no-shorts.user.js`](./youtube-no-shorts.user.js) →
-save. Then open youtube.com in Safari.
+contents of the `.user.js` file → save. Then open youtube.com in Safari.
 
 **Android (Firefox + Violentmonkey/Tampermonkey):** open the extension's
-dashboard → create a new script → paste in the contents of
-[`youtube-no-shorts.user.js`](./youtube-no-shorts.user.js) → save. Then open
-youtube.com in Firefox.
+dashboard → create a new script → paste in the contents of the `.user.js`
+file → save. Then open youtube.com in Firefox.
 
 (Full first-time setup instructions, if you haven't installed Userscripts /
 Violentmonkey yet, are in [`../instagram-declutter/README.md`](../instagram-declutter/README.md).)
@@ -30,7 +46,7 @@ Violentmonkey yet, are in [`../instagram-declutter/README.md`](../instagram-decl
 
 Using iOS's built-in **"Add to Home Screen"** on youtube.com (or
 instagram.com) creates a stripped-down web view that Safari extensions never
-run in — so this script (and Userscripts entirely) would silently stop
+run in — so these scripts (and Userscripts entirely) would silently stop
 working. That's an iOS platform restriction, not something a script can work
 around.
 
@@ -52,7 +68,13 @@ are the broken kind.
 
 ## If it stops working
 
-YouTube changes its internal component names periodically. If Shorts
-reappear, open `youtube-no-shorts.user.js` — the CSS block and
-`COMPONENT_TAG_RE` near the top are the pieces most likely to need an
-update, the same way `ANCESTOR_HOPS`/selectors were for the Instagram script.
+YouTube changes its internal component names periodically.
+
+- Shorts reappearing: open `youtube-no-shorts.user.js` — the CSS block and
+  `COMPONENT_TAG_RE` near the top are the pieces most likely to need an
+  update, the same way `ANCESTOR_HOPS`/selectors were for the Instagram
+  script.
+- Ads slipping through or the skip button not firing: open
+  `youtube-no-ads.user.js` and check the `HIDE_CSS` selector list and the
+  `.ytp-ad-skip-button` selectors in `handleVideoAds` — YouTube occasionally
+  renames these.
