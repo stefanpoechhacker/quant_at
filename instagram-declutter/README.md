@@ -47,6 +47,15 @@ Android** instead, which does:
    contents of [`instagram-no-reels.user.js`](./instagram-no-reels.user.js).
 4. Save, then open instagram.com in Firefox.
 
+## Getting a home-screen icon that still works
+
+If you use iOS's built-in **"Add to Home Screen"** on instagram.com, it
+creates a stripped-down web view that Safari extensions never run in — so
+this script would silently stop working there. See
+[`../youtube-declutter/README.md`](../youtube-declutter/README.md#getting-a-home-screen-icon-that-still-works)
+for a Shortcuts-app-based workaround that gives you a tappable home-screen
+icon without losing the extension.
+
 ## If it stops working
 
 Instagram changes its markup fairly often. If the Reels tab reappears, open
